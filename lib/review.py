@@ -19,7 +19,29 @@ class Review:
             f"<Review {self.id}: {self.year}, {self.summary}, "
             + f"Employee: {self.employee_id}>"
         )
-
+        
+    @property
+    def year(self):
+        return self._year
+    
+    @year.setter
+    def year(self,year):
+        if type(year) is int:
+            self._year=year
+        else:
+            raise ValueError("year must be an integer")
+        
+    @property
+    def summary(self):
+        return self._summary
+    
+    @summary.setter
+    def summary(self,summary):
+        if len(summary)>0:
+            self._summary=summary
+        else:
+            raise ValueError("summary must be there")
+    
     @classmethod
     def create_table(cls):
         """ Create a new table to persist the attributes of Review instances """
@@ -79,7 +101,7 @@ class Review:
     def find_by_id(cls, id):
         """Return a Review instance having the attribute values from the table row."""
         sql ="""
-            SELECT * from review
+            SELECT * from reviews
             where id=?
         """
         row= CURSOR.execute(sql, (id,)).fetchone()
@@ -88,17 +110,17 @@ class Review:
     def update(self):
         """Update the table row corresponding to the current Review instance."""
         sql ="""
-            UPDATE review
+            UPDATE reviews
             SET year=?, summary=? ,employee_id=?
             WHERE id=?
         """
-        CURSOR.execute(sql,(self.year,self.summary,self.employee_id))
+        CURSOR.execute(sql,(self.year,self.summary,self.employee_id, self.id))
         CONN.commit()
     def delete(self):
         """Delete the table row corresponding to the current Review instance,
         delete the dictionary entry, and reassign id attribute"""
         sql ="""
-            DELETE FROM review
+            DELETE FROM reviews
             WHERE id=?
         """
         CURSOR.execute(sql,(self.id,))
@@ -109,7 +131,7 @@ class Review:
     def get_all(cls):
         """Return a list containing one Review instance per table row"""
         sql="""
-            SELECT * from review
+            SELECT * from reviews
             """
         rows=CURSOR.execute(sql).fetchall()
         return [cls.instance_from_db(row) for row in rows]

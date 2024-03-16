@@ -193,7 +193,7 @@ class Employee:
             from review import Review
             
             review=Review(row[1],row[2],row[3])
-            review.employee_id=row[0]
+            review.id=row[0]
             review_list.append(review.__dict__)
         return review_list
      
