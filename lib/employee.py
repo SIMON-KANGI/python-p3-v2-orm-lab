@@ -12,7 +12,7 @@ class Employee:
         self.name = name
         self.job_title = job_title
         self.department_id = department_id
-
+        self.review_id=None
     def __repr__(self):
         return (
             f"<Employee {self.id}: {self.name}, {self.job_title}, " +
@@ -187,4 +187,14 @@ class Employee:
 
     def reviews(self):
         """Return list of reviews associated with current employee"""
-        pass
+        rows_from_db= CURSOR.execute("""SELECT * FROM reviews WHERE employee_id=? """,(self.id,)).fetchall()
+        review_list=[]
+        for row in rows_from_db:
+            from review import Review
+            
+            review=Review(row[1],row[2],row[3])
+            review.employee_id=row[0]
+            review_list.append(review.__dict__)
+        return review_list
+     
+        
